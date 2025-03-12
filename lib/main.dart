@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:take_photo/camera.service.dart';
+import 'package:take_photo/widget/showImage_modal.widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,46 +32,6 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-Future<void> requestCameraPermission() async {
-  var status = await Permission.camera.request();
-
-  if (status.isGranted) {
-    print("Permiso de cámara concedido");
-  } else if (status.isDenied) {
-    print("Permiso de cámara denegado");
-  } else if (status.isPermanentlyDenied) {
-    print(
-        "Permiso de cámara permanentemente denegado, abre la configuración...");
-    await openAppSettings();
-  }
-}
-
-Future<void> requestStoragePermission() async {
-  // Detectamos qué permiso usar dependiendo de la versión de Android
-  Permission storagePermission = Permission.storage;
-  
-  if (await Permission.photos.isRestricted || await Permission.photos.isPermanentlyDenied) {
-    storagePermission = Permission.photos;
-  }
-
-  var status = await storagePermission.request();
-
-  if (status.isGranted) {
-    print("Permiso de almacenamiento concedido ✅");
-  } else if (status.isDenied) {
-    print("Permiso de almacenamiento denegado ❌");    
-  } else if (status.isPermanentlyDenied) {
-    print("Permiso permanentemente denegado, abriendo configuración...");
-    await openAppSettings(); // Abrimos la configuración manualmente
-  }
-}
-
-Future<bool> _checkPermissions() async {
-  PermissionStatus cameraStatus = await Permission.camera.status;
-  PermissionStatus storageStatus = await Permission.storage.status;
-
-  return cameraStatus.isGranted && storageStatus.isGranted;
-}
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
@@ -83,16 +44,8 @@ class _MyHomePageState extends State<MyHomePage> {
         body: Column(
           children: [
             ElevatedButton(
-                onPressed: () async {
-                  await requestCameraPermission();
-                  await requestStoragePermission();
-
-                  var granted = await _checkPermissions();
-                  if (granted && context.mounted) {
-                    CameraService.openCameraModal(context);
-                  }
-                },
-                child: const Text("Take Photo")),
+                onPressed: () => onCameraPressed(context),
+                child: Center(child: const Text("Take Photo RLP"))),
           ],
         ));
   }
