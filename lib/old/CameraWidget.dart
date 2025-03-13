@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:take_photo/widget/cameraOverlayPainter.widget.dart';
 
 class CameraWidget extends StatefulWidget {
   final double cropWidth;
@@ -186,35 +187,35 @@ class _CameraWidgetState extends State<CameraWidget> {
   }
 }
 
-/// 🔹 Dibuja el overlay de la cámara
-class CameraOverlayPainter extends CustomPainter {
-  final double overlayWidth;
-  final double overlayHeight;
+// /// 🔹 Dibuja el overlay de la cámara
+// class CameraOverlayPainter extends CustomPainter {
+//   final double overlayWidth;
+//   final double overlayHeight;
 
-  CameraOverlayPainter({required this.overlayWidth, required this.overlayHeight});
+//   CameraOverlayPainter({required this.overlayWidth, required this.overlayHeight});
 
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..color = Colors.green
-      ..strokeWidth = 4
-      ..style = PaintingStyle.stroke;
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final Paint paint = Paint()
+//       ..color = Colors.green
+//       ..strokeWidth = 4
+//       ..style = PaintingStyle.stroke;
 
-    double marginX = (size.width - overlayWidth) / 2;
-    double marginY = (size.height - overlayHeight) / 2;
-    double cornerSize = 30;
+//     double marginX = (size.width - overlayWidth) / 2;
+//     double marginY = (size.height - overlayHeight) / 2;
+//     double cornerSize = 30;
 
-    _drawCorner(canvas, marginX, marginY, paint, cornerSize, isTopLeft: true);
-    _drawCorner(canvas, marginX + overlayWidth, marginY, paint, cornerSize, isTopLeft: false);
-    _drawCorner(canvas, marginX, marginY + overlayHeight, paint, cornerSize, isTopLeft: false, isBottom: true);
-    _drawCorner(canvas, marginX + overlayWidth, marginY + overlayHeight, paint, cornerSize, isBottom: true);
-  }
+//     _drawCorner(canvas, marginX, marginY, paint, cornerSize, isTopLeft: true);
+//     _drawCorner(canvas, marginX + overlayWidth, marginY, paint, cornerSize, isTopLeft: false);
+//     _drawCorner(canvas, marginX, marginY + overlayHeight, paint, cornerSize, isTopLeft: false, isBottom: true);
+//     _drawCorner(canvas, marginX + overlayWidth, marginY + overlayHeight, paint, cornerSize, isBottom: true);
+//   }
 
-  void _drawCorner(Canvas canvas, double x, double y, Paint paint, double size, {bool isTopLeft = false, bool isBottom = false}) {
-    canvas.drawLine(Offset(x, y), Offset(x + (isTopLeft ? size : -size), y), paint);
-    canvas.drawLine(Offset(x, y), Offset(x, y + (isBottom ? -size : size)), paint);
-  }
+//   void _drawCorner(Canvas canvas, double x, double y, Paint paint, double size, {bool isTopLeft = false, bool isBottom = false}) {
+//     canvas.drawLine(Offset(x, y), Offset(x + (isTopLeft ? size : -size), y), paint);
+//     canvas.drawLine(Offset(x, y), Offset(x, y + (isBottom ? -size : size)), paint);
+//   }
 
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
+//   @override
+//   bool shouldRepaint(CustomPainter oldDelegate) => false;
+// }

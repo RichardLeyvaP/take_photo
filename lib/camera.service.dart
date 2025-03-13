@@ -10,4 +10,6 @@ class CameraService {
       builder: (context) => const DocumentCaptureScreen(),
     );
   }
+
+
 }

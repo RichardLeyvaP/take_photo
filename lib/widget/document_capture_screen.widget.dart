@@ -1,9 +1,10 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
-import 'package:path_provider/path_provider.dart';
+import 'package:take_photo/old/CameraWidget.dart';
+import 'package:take_photo/widget/cameraOverlayPainter.widget.dart';
+import 'package:take_photo/widget/cropImage.service.dart';
 
 
 class DocumentCaptureScreen extends StatefulWidget {
@@ -69,7 +70,7 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
       /**VER DIMENSIONES D EL AIMAGEN YA RECORTADA */
     
 
-final croppedFile = await _cropImage(File(photo.path));
+final croppedFile = await cropImage(File(photo.path));
 
 // Obtener las dimensiones de la imagen
 final image = File(croppedFile!.path);
@@ -133,30 +134,28 @@ if (decodedImage != null) {
       Widget _buildTopBar() {
     return Positioned(
       top: 10,
-//left: 10,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.close, color: Colors.white, size: 30),
-              onPressed: () => Navigator.pop(context),
-            ),
-            SizedBox(width: size.width * 0.21),
-            Row(
-              children: [
-                const Icon(Icons.crop_free_outlined, color: Color.fromARGB(171, 255, 255, 255), size: 30),
-                Text('Auto Capture On', style: const TextStyle(color: Colors.white, fontSize: 12)),
-              ],
-            ),
-            SizedBox(width: size.width * 0.21),
-             IconButton(
-              icon: const Icon(Icons.flash_auto_outlined, color: Colors.white, size: 30),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ],
-        ),
+        left: 0, // Asegura que el widget inicie desde la izquierda
+    right: 0, // Asegura que el widget termine en la derecha
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.close, color: Colors.white, size: 30),
+            onPressed: () => Navigator.pop(context),
+          ),
+          
+          Row(
+            children: [
+              const Icon(Icons.crop_free_outlined, color: Color.fromARGB(171, 255, 255, 255), size: 30),
+              Text('Auto Capture On', style: const TextStyle(color: Colors.white, fontSize: 12)),
+            ],
+          ),
+        
+           IconButton(
+            icon: const Icon(Icons.flash_auto_outlined, color: Colors.white, size: 30),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
       ),
     );
   }
@@ -248,101 +247,10 @@ if (decodedImage != null) {
 
 
 
-Future<File?> _cropImage(File imageFile) async {
-    final imageBytes = await imageFile.readAsBytes();
-    final image = img.decodeImage(imageBytes);
-    if (image == null) return null;
-
-    // final x = (image.width - width) ~/ 2;
-    // final y = (image.height - height) ~/ 2;
- const width = 2550;  // Ancho de una hoja Carta en píxeles (Aprox. 2550px)
-const height = 3300; // Alto de una hoja Carta en píxeles (Aprox. 3300px)
-
-final x = (image.width - width) ~/ 2;  // Centrar en X  
-final y = (image.height - height) ~/ 2;  // Centrar en Y  
-
-
-    final cropped =
-        img.copyCrop(image, x: x, y: y, width: width, height: height);
-    final croppedBytes = Uint8List.fromList(img.encodePng(cropped));
-
-    final tempDir = await getTemporaryDirectory();
-    final outputFile = File(
-        '${tempDir.path}/cropped_image_${DateTime.now().millisecondsSinceEpoch}.png');
-
-    await outputFile.writeAsBytes(croppedBytes);
-    
-    return outputFile;
-  }
 
 
 
 
-}
 
-class CameraOverlayPainter extends CustomPainter {
-  final double overlayWidth;
-  final double overlayHeight;
-
-  CameraOverlayPainter({required this.overlayWidth, required this.overlayHeight});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    void _drawCorner(Canvas canvas, double x, double y, Paint paint, double size,
-        {bool isTopLeft = false, bool isBottom = false}) {
-      canvas.drawLine(
-          Offset(x, y), Offset(x + (isTopLeft ? size : -size), y), paint);
-      canvas.drawLine(
-          Offset(x, y), Offset(x, y + (isBottom ? -size : size)), paint);
-    }
-
-    final paint = Paint()
-      ..color = Colors.green
-      ..strokeWidth = 4
-      ..style = PaintingStyle.stroke;
-
-    // Obtener las proporciones de la pantalla en relación al área de recorte
-    final scaleX = size.width / 2550;
-    final scaleY = size.height / 3300;
-    final scaleFactor = scaleX < scaleY ? scaleX : scaleY; // Mantener relación
-
-    final scaledWidth = 2550 * scaleFactor;
-    final scaledHeight = 3300 * scaleFactor;
-
-    final marginX = (size.width - scaledWidth) / 2;
-    final marginY = (size.height - scaledHeight) / 2;
-    const cornerSize = 30.0;
-
-    // Pintar las franjas negras (arriba, abajo, izquierda, derecha)
-    final blackPaint = Paint()..color = Colors.black;
-
-    // Pintar franja negra en la parte superior (40px)
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, marginY-2), blackPaint);
-
-    // Pintar franja negra en la parte inferior (40px)
-    canvas.drawRect(Rect.fromLTWH(0, size.height - marginY+2, size.width, marginY+2 ), blackPaint);
-
-    // Pintar franja negra en la parte izquierda (20px)
-    canvas.drawRect(Rect.fromLTWH(0, 0, (marginX-2), size.height), blackPaint);
-
-    // Pintar franja negra en la parte derecha (20px)
-    canvas.drawRect(Rect.fromLTWH(size.width - (marginX-2), 0, marginX-2, size.height), blackPaint);
-
-    // Pintar el área transparente dentro del recuadro donde estará la cámara
-    final transparentPaint = Paint()..color = Colors.transparent;
-    canvas.drawRect(
-      Rect.fromLTWH(marginX, marginY, scaledWidth, scaledHeight),
-      transparentPaint,
-    );
-
-    // Dibujar las esquinas del recuadro verde
-    _drawCorner(canvas, marginX, marginY, paint, cornerSize, isTopLeft: true);
-    _drawCorner(canvas, marginX + scaledWidth, marginY, paint, cornerSize);
-    _drawCorner(canvas, marginX, marginY + scaledHeight, paint, cornerSize, isTopLeft: true, isBottom: true);
-    _drawCorner(canvas, marginX + scaledWidth, marginY + scaledHeight, paint, cornerSize, isBottom: true);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
