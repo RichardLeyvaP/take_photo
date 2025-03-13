@@ -24,17 +24,18 @@ void _showImageModal(BuildContext context, File imageFile) {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("Foto tomada", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              child: Text("Photo taken", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text("Cerrar"),
+                  child: Text("Close"),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text("Guardar imagen"),
+                  child: Text("Save image"),
                 ),
               ],
             ),

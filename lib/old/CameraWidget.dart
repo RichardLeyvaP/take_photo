@@ -32,6 +32,12 @@ class _CameraWidgetState extends State<CameraWidget> {
   Future<void> _requestPermissions() async {
     await Permission.camera.request();
     await Permission.storage.request();
+     if (await Permission.storage.request().isGranted) {
+    // Permiso concedido
+  } else {
+    // Muestra un diálogo de permisos
+    openAppSettings();
+  }
   }
 
   /// Inicializa la cámara
@@ -186,36 +192,3 @@ class _CameraWidgetState extends State<CameraWidget> {
     return outputFile;
   }
 }
-
-// /// 🔹 Dibuja el overlay de la cámara
-// class CameraOverlayPainter extends CustomPainter {
-//   final double overlayWidth;
-//   final double overlayHeight;
-
-//   CameraOverlayPainter({required this.overlayWidth, required this.overlayHeight});
-
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     final Paint paint = Paint()
-//       ..color = Colors.green
-//       ..strokeWidth = 4
-//       ..style = PaintingStyle.stroke;
-
-//     double marginX = (size.width - overlayWidth) / 2;
-//     double marginY = (size.height - overlayHeight) / 2;
-//     double cornerSize = 30;
-
-//     _drawCorner(canvas, marginX, marginY, paint, cornerSize, isTopLeft: true);
-//     _drawCorner(canvas, marginX + overlayWidth, marginY, paint, cornerSize, isTopLeft: false);
-//     _drawCorner(canvas, marginX, marginY + overlayHeight, paint, cornerSize, isTopLeft: false, isBottom: true);
-//     _drawCorner(canvas, marginX + overlayWidth, marginY + overlayHeight, paint, cornerSize, isBottom: true);
-//   }
-
-//   void _drawCorner(Canvas canvas, double x, double y, Paint paint, double size, {bool isTopLeft = false, bool isBottom = false}) {
-//     canvas.drawLine(Offset(x, y), Offset(x + (isTopLeft ? size : -size), y), paint);
-//     canvas.drawLine(Offset(x, y), Offset(x, y + (isBottom ? -size : size)), paint);
-//   }
-
-//   @override
-//   bool shouldRepaint(CustomPainter oldDelegate) => false;
-// }

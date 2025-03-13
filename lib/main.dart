@@ -13,12 +13,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Demo- Photo image',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Flutter Demo - Photo image'),
     );
   }
 }
@@ -41,12 +41,15 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(widget.title),
         ),
-        body: Column(
-          children: [
-            ElevatedButton(
-                onPressed: () => onCameraPressed(context),
-                child: Center(child: const Text("Take Photo RLP"))),
-          ],
-        ));
+        body: Center(
+  child: ElevatedButton(
+    onPressed: () => onCameraPressed(context),
+    child: const Text("Take Photo RLP"),
+    style: ElevatedButton.styleFrom(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Ajusta el padding
+    ),
+  ),
+)
+);
   }
 }
