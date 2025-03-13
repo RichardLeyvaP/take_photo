@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:take_photo/camera.service.dart';
 import 'package:take_photo/widget/showImage_modal.widget.dart';
 
 void main() {

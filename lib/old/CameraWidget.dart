@@ -29,16 +29,21 @@ class _CameraWidgetState extends State<CameraWidget> {
   }
 
   /// Solicita permisos de cámara y almacenamiento
-  Future<void> _requestPermissions() async {
-    await Permission.camera.request();
-    await Permission.storage.request();
-     if (await Permission.storage.request().isGranted) {
-    // Permiso concedido
+Future<void> _requestPermissions() async {
+  final cameraStatus = await Permission.camera.request();
+  final storageStatus = await Permission.storage.request();
+
+  print("Camera Permission: $cameraStatus");
+  print("Storage Permission: $storageStatus");
+
+  if (storageStatus.isGranted && cameraStatus.isGranted) {
+    print("Permisos concedidos.");
   } else {
-    // Muestra un diálogo de permisos
+    print("Permisos denegados, abriendo configuración...");
     openAppSettings();
   }
-  }
+}
+
 
   /// Inicializa la cámara
   Future<void> _initCamera() async {
