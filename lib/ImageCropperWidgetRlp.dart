@@ -94,10 +94,10 @@ Future<File> cropImage() async {
   final originalHeight = image.height.toDouble();
 
   // Definir las coordenadas de recorte fijas
-  final double cropX = 1; // Empezar desde el borde izquierdo
-  final double cropY = 1; // Empezar 20 píxeles desde la parte superior
-  final double cropWidth = originalWidth - 1; // Mitad del ancho de la imagen
-  final double cropHeight = originalHeight - 1 - 1; // Altura restante (20px arriba y 50px abajo)
+  final double cropX = 5; // Empezar desde el borde izquierdo
+  final double cropY = 5; // Empezar 20 píxeles desde la parte superior
+  final double cropWidth = originalWidth - 5; // Mitad del ancho de la imagen
+  final double cropHeight = originalHeight - 5 - 5; // Altura restante (5px arriba y 5px abajo)
 
   // Recortar la imagen
   img.Image croppedImage = img.copyCrop(
