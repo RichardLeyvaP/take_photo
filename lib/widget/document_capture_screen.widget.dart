@@ -139,6 +139,10 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
       Navigator.pop(context, selectedImage);
     }
   }
+  Future<void> _selectImageNew(context) async {
+   _imageService.pickAndCropImageNew(context);
+    
+  }
 
 //FUNCION QUE MANEJA EL FLASH DE LA CAMARA
   FlashMode _flashMode = FlashMode.auto;
@@ -319,7 +323,7 @@ class _DocumentCaptureScreenState extends State<DocumentCaptureScreen> {
           children: [
             InkWell(
                 onTap: () {
-                  _selectImage();
+                  _selectImageNew(context);
                 },
                 child:
                     Icon(Icons.photo_library, color: Colors.white, size: 30)),
