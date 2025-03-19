@@ -41,6 +41,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   image_picker: ^1.1.2
   device_info_plus: ^11.3.0
+  screenshot: ^3.0.0
 
 dev_dependencies:
   flutter_test:

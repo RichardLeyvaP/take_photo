@@ -4,7 +4,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:take_photo/image.service.dart';
-import 'package:take_photo/old/CameraWidget.dart';
 import 'package:take_photo/widget/cameraOverlayPainter.widget.dart';
 import 'package:take_photo/widget/cropImage.service.dart';
 
