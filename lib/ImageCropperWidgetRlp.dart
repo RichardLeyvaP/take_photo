@@ -39,27 +39,17 @@ class _ImageCropperWidgetState extends State<ImageCropperWidget> {
     transformationController.removeListener(_onTransformationChanged);
     super.dispose();
   }
-
   void _onTransformationChanged() {
-    final Matrix4 matrix = transformationController.value;
-    final double scale = matrix.getMaxScaleOnAxis();
-    final double offsetX = matrix.getTranslation().x;
-    final double offsetY = matrix.getTranslation().y;
-    final double maxOffsetX = (_cropWidth * scale - _cropWidth) / 2;
-    final double maxOffsetY = (_cropHeight * scale - _cropHeight) / 2;
-    final double safeMaxOffsetX = maxOffsetX.clamp(0, double.infinity);
-    final double safeMaxOffsetY = maxOffsetY.clamp(0, double.infinity);
+  final Matrix4 matrix = transformationController.value;
+  final double offsetX = matrix.getTranslation().x;
+  final double offsetY = matrix.getTranslation().y;
 
-    if (offsetX.abs() > safeMaxOffsetX || offsetY.abs() > safeMaxOffsetY) {
-      final Matrix4 newMatrix = matrix.clone();
-      newMatrix.setTranslation(vector_math.Vector3(
-        offsetX.clamp(-safeMaxOffsetX, safeMaxOffsetX),
-        offsetY.clamp(-safeMaxOffsetY, safeMaxOffsetY),
-        0,
-      ));
-      transformationController.value = newMatrix;
-    }
-  }
+  final Matrix4 newMatrix = matrix.clone();
+  newMatrix.setTranslation(vector_math.Vector3(offsetX, offsetY, 0));
+
+  transformationController.value = newMatrix;
+}
+
 
   @override
   Widget build(BuildContext context) {
