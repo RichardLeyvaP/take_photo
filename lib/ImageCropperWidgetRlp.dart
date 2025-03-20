@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:vector_math/vector_math_64.dart' as vector_math;
+import 'package:take_photo/widget/showImageModal.widget.dart';
 import 'dart:ui' as ui;
 import 'package:image/image.dart' as img;
 
@@ -42,10 +42,13 @@ class _ImageCropperWidgetState extends State<ImageCropperWidget> {
   final double offsetX = matrix.getTranslation().x;
   final double offsetY = matrix.getTranslation().y;
 
-  final Matrix4 newMatrix = matrix.clone();
-  newMatrix.setTranslation(vector_math.Vector3(offsetX, offsetY, 0));
+  
 
-  transformationController.value = newMatrix;
+  final Matrix4 newMatrix = Matrix4.identity()
+  ..setFrom(matrix)
+  ..setTranslationRaw(offsetX, offsetY, 0);
+
+transformationController.value = newMatrix;
 }
 
 
@@ -62,10 +65,10 @@ class _ImageCropperWidgetState extends State<ImageCropperWidget> {
             icon: Icon(Icons.crop),
             onPressed: () async {
               File? croppedFile =
-                  await captureAndSaveImage(screenshotController);
+                  await captureAndSaveImage(screenshotController,Size(screenSize.width, screenSize.height));
               if (croppedFile != null) {
                 Navigator.pop(context, croppedFile);
-                //showImageModal(context, croppedFile);
+                showImageModal(context, croppedFile);
               }
             },
           ),
@@ -109,9 +112,58 @@ class _ImageCropperWidgetState extends State<ImageCropperWidget> {
     
   }
 }
+Future<File?> captureAndSaveImage(ScreenshotController screenshotController,Size screenSize) async {
+  try {
+    final Uint8List? image = await screenshotController.capture();
+
+    if (image != null) {
+      final img.Image originalImage = img.decodeImage(image)!;
+
+      // Obtener el tamaño de la imagen capturada
+      final int imageWidth = originalImage.width;
+      final int imageHeight = originalImage.height;
+
+      // Dimensiones del rectángulo verde (ajustadas a la imagen capturada)
+      final double scaleX = imageWidth / screenSize.width;
+      final double scaleY = imageHeight / screenSize.height;
+      final double scale = scaleX < scaleY ? scaleX : scaleY;
+
+      final double scaledWidth = 8.5 * 96 * scale;
+      final double scaledHeight = 11 * 96 * scale;
+
+      final int cropWidth = scaledWidth.toInt();
+      final int cropHeight = scaledHeight.toInt();
+
+      // Posición del recorte (centrado en la imagen capturada)
+      final int offsetX = ((imageWidth - cropWidth) / 2).toInt();
+      final int offsetY = ((imageHeight - cropHeight) / 2).toInt();
+
+      // Recortar la imagen
+      final img.Image croppedImage = img.copyCrop(
+        originalImage,
+        x: offsetX,
+        y: offsetY,
+        width: cropWidth,
+        height: cropHeight,
+      );
+
+      // Guardar la imagen recortada
+      final Uint8List croppedBytes = Uint8List.fromList(img.encodePng(croppedImage));
+      final directory = await getTemporaryDirectory();
+      final file = File('${directory.path}/cropped_image_${DateTime.now().millisecondsSinceEpoch}.png');
+      await file.writeAsBytes(croppedBytes);
+
+      return file;
+    } else {
+      return null;
+    }
+  } catch (e) {
+    return null;
+  }
+}
 
 
- Future<File?> captureAndSaveImage(ScreenshotController screenshotController) async {
+ /*Future<File?> captureAndSaveImage(ScreenshotController screenshotController) async {
     try {
       // Capturar toda la pantalla
       final Uint8List? image = await screenshotController.capture();
@@ -131,7 +183,7 @@ class _ImageCropperWidgetState extends State<ImageCropperWidget> {
     } catch (e) {
       return null;
     }
-  } 
+  } */
   
 class MyPainter extends CustomPainter {
   final Size screenSize; // Tamaño de la pantalla del teléfono
