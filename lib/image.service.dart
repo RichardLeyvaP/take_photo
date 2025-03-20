@@ -164,26 +164,6 @@ Future<img.Image> decodeAndResizeImage(File imageFile, {int maxWidth = 1024}) as
   }*/
 
 
- Future<File?> captureAndSaveImage(ScreenshotController screenshotController) async {
-    try {
-      // Capturar toda la pantalla
-      final Uint8List? image = await screenshotController.capture();
 
-      if (image != null) {
-        final img.Image originalImage = img.decodeImage(image)!;
-       
-        final Uint8List croppedBytes = Uint8List.fromList(img.encodePng(originalImage));
-        final directory = await getTemporaryDirectory();
-        final file = File('${directory.path}/cropped_image_${DateTime.now().millisecondsSinceEpoch}.png');
-        await file.writeAsBytes(croppedBytes);
-
-        return file;
-      } else {
-        return null;
-      }
-    } catch (e) {
-      return null;
-    }
-  }
 
 }
